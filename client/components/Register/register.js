@@ -1,4 +1,4 @@
-import React , { useEffect, useState } from "react"
+import React , { useState } from "react"
 import { EyeIcon, EyeOffIcon, TrashIcon } from "@heroicons/react/solid"
 import Head from "next/head"
 import Axios from 'axios'
@@ -9,13 +9,12 @@ const Register=({ set_state })=>{
     const [email, set_email] = useState("");
     const [username, set_username] = useState("");
     const [password_type, set_password_type] = useState("password");
-    const [all_users, set_all_users] = useState();
 
-    useEffect(async()=>{
+    async function getUsers(){
         const res = await fetch("http://localhost:3001/getUsers");
         const data = await res.json();
-        set_all_users(data["users"])
-    },[])
+        return data.users
+    }
 
 
     function register(){
@@ -34,25 +33,31 @@ const Register=({ set_state })=>{
         })
     }
 
-    const email_exists=()=>{
+    const email_exists= async ()=>{
+        const all_users = await getUsers();
+
         let result = false;
-        all_users.map((e)=>{
-            if(e["email"]===email){
+        await all_users.map((e)=>{
+            if(e.email===email){
                 result = true
             }
         })
 
+        console.log("emailResult : ",result)
         return result;
     }
 
-    const username_exists=()=>{
+    const username_exists= async ()=>{
+        const all_users = await getUsers();
+
         let result = false;
-        all_users.map((e)=>{
-            if(e["username"]===username){
+        await all_users.map((e)=>{
+            if(e.username===username){
                 result = true
             }
         })
 
+        console.log("usernameResult", result)
         return result;
     }
 
@@ -104,16 +109,17 @@ const Register=({ set_state })=>{
                     </button>}
                 </div>
                 
-                <button onClick={()=>{
-                    if(!email_exists()){
-                        if(!username_exists()){
-                            register();
-                        }else{
-                            alert("This username already exists!")
-                        }
+                <button onClick={async()=>{
+                    if(await email_exists()){
+                        alert("This email already exists")
                     }else{
-                        alert("This email already exists!")
+                        if(await username_exists()){
+                            alert("This username already exists")
+                        }else{
+                            register()
+                        }
                     }
+                
                 }} className="bg-white mt-4 text-black rounded-3xl font-bold px-2 py-2 duration-300 hover:bg-gray-200">
                     Register
                 </button>
