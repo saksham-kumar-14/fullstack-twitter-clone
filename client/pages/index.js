@@ -18,24 +18,21 @@ const Home = () => {
     return token.slice(start,token.length)
   }
   
-  useEffect(async()=>{
-    try{
-      const token = decodeCookie(document.cookie);
-      const user = jwt.decode(token);
-      const res = await axios.post("http://localhost:3001/login",{
-        email : user.email,
-        password : user.password
-      })
-      const data = await res.data;
-
-      console.log(data)
-      if(data.user){
-        set_loggedin(true)
+  useEffect(async () => {
+    const token = decodeCookie(document.cookie)
+    const res = await axios.get("http://localhost:3001/api/login", {
+      headers: {
+        "user-token": token
       }
-    }catch(error){
-      console.log(error)
+    })
+    const data = await res.data;
+    if (data.userExists) {
+      set_loggedin(true);
+    } else {
+      set_loggedin(false);
     }
-  },[])
+
+  }, [])
 
   return(
     <div>
