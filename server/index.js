@@ -107,6 +107,25 @@ app.post("/deleteUser" , async(req,res)=>{
     res.json({ status : "ok" })
 })
 
+app.get("/api/login" , async(req,res)=>{
+    const token = req.headers["user-token"];
+    
+    try{
+        const decoded = verify_tokens(token);
+        const email = decoded.email;
+        const password = decoded.password
+        const user = await user_model.findOne({ email : email , password : password });
+
+        if(user){
+            return res.json({ status:"ok" , userExists:true })
+        }else{
+            return res.json({ status : 404 , userExists:false })
+        }
+    }catch{
+        return res.json({ status : 404 , userExists:false })
+    }
+})
+
 app.listen(3001 , ()=>{
     console.log("The server is running at http://localhost:3001")
 })
