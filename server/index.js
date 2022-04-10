@@ -5,7 +5,10 @@ const cors = require("cors");
 
 const user_model = require("./models/users");
 const post_model = require("./models/posts")
-const { create_tokens } = require("./JWT.js")
+const { create_tokens } = require("./JWT.js");
+const { verify_tokens } = require("./JWT.js");
+
+require("dotenv").config();
 
 mongoose.connect("mongodb+srv://saksham:saksham@cluster0.bhore.mongodb.net/twitter-clone?retryWrites=true&w=majority")
 
@@ -126,6 +129,6 @@ app.get("/api/login" , async(req,res)=>{
     }
 })
 
-app.listen(3001 , ()=>{
+app.listen(process.env.PORT || 3001 , ()=>{
     console.log("The server is running at http://localhost:3001")
 })
