@@ -1,4 +1,4 @@
-const { sign } = require("jsonwebtoken");
+const { sign, verify } = require("jsonwebtoken");
 require("dotenv").config();
 
 const create_tokens= (user) => {
@@ -13,4 +13,10 @@ const create_tokens= (user) => {
     return access_token;
 }
 
-module.exports = { create_tokens }
+const verify_tokens = (token) => {
+    const access_token = verify(token, process.env.JWT_ACCESS_TOKEN);
+
+    return access_token;
+}
+
+module.exports = { create_tokens , verify_tokens };
